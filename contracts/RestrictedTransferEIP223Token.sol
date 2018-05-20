@@ -14,7 +14,7 @@ contract RestrictedTransferEIP223Token is RestrictedTransferToken, EIP223 {
     
     function transfer(address _to, uint256 _value)
         public 
-        onlyToAllowed(_to) 
+        isTransferAllowed(msg.sender, _to, _value) 
         returns (bool success) 
     {
         return super.transfer(_to, _value);
@@ -22,7 +22,7 @@ contract RestrictedTransferEIP223Token is RestrictedTransferToken, EIP223 {
 
     function transfer(address _to, uint _value, bytes _data)
         public
-        onlyToAllowed(_to)
+        isTransferAllowed(msg.sender, _to, _value) 
         returns (bool success)
     {
         return super.transfer(_to, _value, _data);

@@ -6,23 +6,23 @@ import "openzeppelin-solidity/contracts/token/ERC20/StandardToken.sol";
 import "./AllowanceRegistryInterface.sol";
 
 
-contract RestrictedTransferToken is Ownable, StandardToken{
+contract RestrictedTransferToken is Ownable, StandardToken {
 
     AllowanceRegistryInterface public registry;
   
-    modifier onlyToAllowed(address recipient) {
-        require(registry.isAllowed(recipient));
+    modifier isTransferAllowed(address _from, address _to, uint256 _value) {
+        require(registry.transferAllowed(_from, _to, _value));
         _;
     }
 
     constructor(AllowanceRegistryInterface _registry) public {
-        require(address(_registry) != 0);
+        require(_registry != address(0));
         registry = _registry; 
     }
 
     function transfer(address _to, uint256 _value)
         public 
-        onlyToAllowed(_to) 
+        isTransferAllowed(msg.sender, _to, _value) 
         returns (bool success) 
     {
         return super.transfer(_to, _value);
@@ -30,19 +30,14 @@ contract RestrictedTransferToken is Ownable, StandardToken{
 
     function transferFrom(address _from, address _to, uint256 _value)
         public 
-        onlyToAllowed(_to)
+        isTransferAllowed(_from, _to, _value)
         returns (bool success) 
     {
         return super.transferFrom(_from, _to, _value);
     }
 
     function changeRegistry(AllowanceRegistryInterface _newRegistry) public onlyOwner {
-        require(address(_newRegistry) != 0);
+        require(_newRegistry != address(0));
         registry = _newRegistry; 
     }
-    
-    function isAllowed(address _user) public view returns(bool _isAllowed){
-        return registry.isAllowed(_user);
-    }
-
 }

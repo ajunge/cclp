@@ -2,5 +2,5 @@ pragma solidity 0.4.23;
 
 
 contract AllowanceRegistryInterface {
-    function isAllowed(address _user) public view returns(bool _isAllowed);
+    function transferAllowed(address _from, address _to, uint256 _value) public view returns(bool _isAllowed);
 }
